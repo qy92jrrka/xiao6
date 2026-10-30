@@ -86,16 +86,17 @@ body.col-resizing *{cursor:col-resize!important}
 .card-head button{height:23px;padding:0 9px;font-size:12px;border-radius:5px}
 .headstat{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
 .headstat b{color:var(--red);font-size:14px;font-variant-numeric:tabular-nums}
+.oddhint{display:none}
 
 /* ---------- 号码网格 ---------- */
 .grid{flex:1 1 auto;min-height:0;overflow:auto;display:block}
-.gbody{display:flex;flex-wrap:wrap;align-items:flex-start}
-.gcol{flex:1 1 152px;min-width:142px;display:flex;flex-direction:column;
+.gbody{display:flex;align-items:flex-start}
+.gcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;
   border-left:1px solid #eef2f8}
 .gcol:first-child{border-left:0}
 .ghead{position:sticky;top:0;z-index:2;display:flex;height:23px;
   background:linear-gradient(#f7fbff,#e3edf9);border-bottom:1px solid #cfdcea}
-.gcell{display:flex;align-items:center;gap:5px;padding:0 6px;height:23px;
+.gcell{display:flex;align-items:center;gap:5px;padding:0 6px;height:23px;flex:1 1 auto;
   font-size:11px;color:#6d87a5;font-weight:600;letter-spacing:.5px}
 .c1{width:34px;flex:0 0 34px;text-align:center}
 .c2{width:44px;flex:0 0 44px;text-align:center}
@@ -186,32 +187,26 @@ td.left{text-align:left;white-space:normal;word-break:break-all;min-width:70px;
 
 /* ====================== 自适应 ====================== */
 
-/* 平板：收紧号码区块与列宽 */
+/* 平板 / 小笔记本：收紧号码区块，赔率列移到标题栏，保证金额可输入 */
 @media (max-width:1180px){
   #left{min-width:392px}
   #history{min-width:178px}
-  #risk{min-width:134px}
-  .gcol{flex:1 1 134px;min-width:128px}
+  #risk{min-width:140px}
   .ghead,.gcell{height:22px}
-  .c1{width:30px;flex:0 0 30px}
-  .numcell{flex:0 0 30px;gap:1px}
+  #cust-grid .c2,#cust-grid .odd{display:none}
+  .oddhint{display:inline-flex}
+  .c1{width:34px;flex:0 0 34px}
+  .numcell{flex:0 0 34px;gap:1px}
   .c2{width:38px;flex:0 0 38px}
-  .odd,.cntcell{width:38px;flex:0 0 38px}
+  #sum-grid .cntcell{width:28px;flex:0 0 28px;font-size:10.5px}
   .zod{font-size:10px}
-  .amt{font-size:11.5px}
+  .amt{font-size:12px}
   .headstat{font-size:11.5px}
 }
 
-/* 小笔记本：侧栏更窄，规则卡片收起 */
+/* 手机 / 窄屏 / 平板竖屏：单列纵向堆叠，整页滚动 */
 @media (max-width:980px){
   .rules{display:none}
-  #left{min-width:360px}
-  #history{min-width:160px}
-  #risk{min-width:126px}
-}
-
-/* 手机 / 窄屏：单列纵向堆叠，整页滚动 */
-@media (max-width:820px){
   html,body{height:auto;overflow:visible}
   body{background:var(--bg);-webkit-text-size-adjust:100%}
   #app{height:auto;min-height:100%}
@@ -219,10 +214,10 @@ td.left{text-align:left;white-space:normal;word-break:break-all;min-width:70px;
   .topbar{height:auto;flex-wrap:wrap;padding:9px 10px;gap:8px;
     position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(16,24,40,.06)}
   .brand{flex:1 1 auto}
-  .quickbox{flex:1 1 100%;order:2;flex-wrap:wrap;gap:8px}
+  .quickbox{flex:1 1 100%;order:2;flex-wrap:nowrap;gap:6px}
   .quickbox .tip{display:none}
-  .quickbox input{flex:1 1 100%;height:38px;font-size:16px;padding:0 12px}
-  .quickbox button{flex:1 1 0;height:38px;font-size:13.5px}
+  .quickbox input{flex:1 1 auto;min-width:0;height:38px;font-size:16px;padding:0 12px}
+  .quickbox button{flex:0 0 auto;height:38px;padding:0 10px;font-size:13px}
 
   #body{flex-direction:column;padding:8px;gap:10px}
   #left,#history,#risk{flex:0 0 auto;width:100%;min-width:0}
@@ -243,18 +238,18 @@ td.left{text-align:left;white-space:normal;word-break:break-all;min-width:70px;
 
   /* 网格：区块自动换行，整页滚动 */
   .grid{overflow:visible;max-height:none}
-  .gbody{gap:8px 0}
-  .gcol{flex:1 1 46%;min-width:0;border-left:0;border-top:1px solid #eef2f8;padding-top:2px}
+  .gbody{flex-wrap:wrap;gap:8px 0}
+  .gcol{flex:0 0 50%;min-width:0;border-left:0;border-top:1px solid #eef2f8;padding-top:2px}
   .gcol:nth-child(-n+2){border-top:0;padding-top:0}
   .ghead{position:static;height:26px;border-radius:5px 5px 0 0}
-  .gcell{height:26px;font-size:11.5px}
+  .gcell{height:26px;font-size:11.5px;gap:4px;padding:0 4px}
   .row{height:28px;gap:4px;padding:0 4px}
   .c1{width:36px;flex:0 0 36px}
   .numcell{flex:0 0 36px;gap:2px}
   .chip{flex:0 0 21px;width:21px;height:21px;font-size:11.5px}
   .zod{font-size:11px}
   .c2{width:38px;flex:0 0 38px}
-  .odd,.cntcell{width:38px;flex:0 0 38px;font-size:12px}
+  .odd,.cntcell{width:38px;flex:0 0 38px;font-size:11px}
   .amt{height:26px;font-size:16px;padding:0 3px;border-radius:4px}
 
   /* 表格：整页滚动 + 横向自适应 */
@@ -268,6 +263,15 @@ td.left{text-align:left;white-space:normal;word-break:break-all;min-width:70px;
   #toast{bottom:22px;font-size:13px;padding:10px 16px;max-width:88vw}
 }
 
+/* 平板 / 手机横屏：号码区块一行放 3 个，标题栏单行 */
+@media (min-width:600px) and (max-width:980px){
+  .gcol{flex:0 0 33.3333%}
+  .gcol:nth-child(-n+3){border-top:0;padding-top:0}
+  .topbar{flex-wrap:nowrap}
+  .quickbox{flex:1 1 auto;order:0}
+  .quickbox input{flex:1 1 auto;width:auto}
+}
+
 /* 超窄屏：进一步收窄号码区块 */
 @media (max-width:430px){
   .card-head button{padding:0 9px;font-size:12px}
@@ -277,7 +281,7 @@ td.left{text-align:left;white-space:normal;word-break:break-all;min-width:70px;
   .chip{flex:0 0 20px;width:20px;height:20px;font-size:11px}
   .zod{font-size:10px}
   .c2{width:34px;flex:0 0 34px}
-  .odd,.cntcell{width:34px;flex:0 0 34px;font-size:11.5px}
+  .odd,.cntcell{width:34px;flex:0 0 34px;font-size:10.5px}
 }
 
 /* 触屏设备：加大点击区域，去掉 hover 干扰 */
@@ -316,6 +320,7 @@ td.left{text-align:left;white-space:normal;word-break:break-all;min-width:70px;
           <h2>散码</h2>
           <span class="sp"></span>
           <span class="headstat">本单汇总 <b id="cust-total">0</b></span>
+          <span class="headstat oddhint" title="每个号码的固定赔率">赔率 47.383</span>
           <button id="btn-clear-order">清空本单</button>
         </div>
         <div class="grid" id="cust-grid"></div>
@@ -1196,8 +1201,8 @@ function loadState(){
 }
 
 /* ---------- 分栏拖拽（按比例记忆，窄屏纵向堆叠时不启用） ---------- */
-const MIN_PX=[430,190,148];
-const stackedMq=window.matchMedia('(max-width:820px)');
+const MIN_PX=[392,178,140];
+const stackedMq=window.matchMedia('(max-width:980px)');
 
 function clearInlineFlex(){
   for(const el of panels)el.style.flex='';
