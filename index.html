@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>六合彩统计 2026马年</title>
+<style>
+:root{
+  --bg:#eef1f5;
+  --card:#ffffff;
+  --line:#e3e7ee;
+  --line-2:#d5dbe5;
+  --text:#1e2733;
+  --muted:#78859a;
+  --accent:#2f6fd0;
+  --red:#b5342a;
+  --blue:#1f6aa5;
+  --green:#17794a;
+  --hl:#fff3a0;
+  --hl-line:#e6cf6d;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:13px/1.45 "Microsoft YaHei UI","Microsoft YaHei","PingFang SC",sans-serif;
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+#app{display:flex;flex-direction:column;height:100%}
+
+/* ---------- 顶栏 ---------- */
+.topbar{flex:0 0 auto;height:46px;display:flex;align-items:center;gap:16px;
+  padding:0 14px;background:#fff;border-bottom:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.brand{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+.logo{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#4a8ae6,#1f5fbf);color:#fff;font-weight:700;font-size:14px;
+  box-shadow:0 1px 3px rgba(31,95,191,.35)}
+.brand b{font-size:14px;letter-spacing:.2px}
+.brand .year{color:var(--muted);font-size:11px;background:#f1f4f9;
+  border:1px solid #e6ebf3;padding:1px 7px;border-radius:9px;margin-left:2px}
+.quickbox{display:flex;align-items:center;gap:8px;flex:1 1 auto;min-width:0}
+.quickbox .tip{color:var(--muted);font-size:12px;flex:0 0 auto}
+.quickbox input{flex:1 1 auto;min-width:90px;height:29px;border:1px solid var(--line-2);
+  border-radius:7px;padding:0 10px;font:inherit;color:var(--text);outline:none;background:#fbfcfe}
+.quickbox input::placeholder{color:#a9b4c4}
+.quickbox input:focus{background:#fff;border-color:#8ab4ee;box-shadow:0 0 0 3px rgba(47,111,208,.13)}
+
+/* ---------- 按钮 ---------- */
+button{height:29px;padding:0 12px;border-radius:7px;border:1px solid var(--line-2);
+  background:#fff;color:#37445a;font:inherit;font-size:12.5px;cursor:pointer;
+  transition:background .12s,border-color .12s,box-shadow .12s;white-space:nowrap}
+button:hover{background:#f7f9fc;border-color:#bfc8d6}
+button:active{background:#eef2f8}
+button.primary{background:linear-gradient(#3f7fe3,#2a66c8);border-color:#2a66c8;
+  color:#fff;font-weight:600;box-shadow:0 1px 2px rgba(42,102,200,.28)}
+button.primary:hover{background:linear-gradient(#4887e8,#2f6ed2);border-color:#2a66c8}
+button.ghost{color:#6b7a8e}
+
+/* ---------- 版面 ---------- */
+#body{flex:1 1 auto;display:flex;min-height:0;padding:10px}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+#left{flex:9 1 0;min-width:430px}
+#history{flex:4 1 0;min-width:190px}
+#risk{flex:2 1 0;min-width:148px}
+.splitter{flex:0 0 10px;cursor:col-resize;position:relative;align-self:stretch}
+.splitter::after{content:"";position:absolute;left:4px;top:0;bottom:0;width:2px;
+  border-radius:2px;background:transparent;transition:background .12s}
+.splitter:hover::after{background:#b7cdea}
+body.col-resizing{cursor:col-resize;user-select:none}
+body.col-resizing *{cursor:col-resize!important}
+
+.custbar{flex:0 0 auto;display:flex;align-items:center;gap:8px}
+.custbar label{font-weight:600;color:#4a5768;font-size:12.5px}
+.custbar input{width:130px;height:28px;padding:0 9px;border:1px solid var(--line-2);
+  border-radius:6px;font:inherit;outline:none;background:#fff}
+.custbar input:focus{border-color:#8ab4ee;box-shadow:0 0 0 3px rgba(47,111,208,.13)}
+
+/* ---------- 卡片 ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:9px;
+  box-shadow:0 1px 2px rgba(16,24,40,.05);display:flex;flex-direction:column;
+  min-height:0;overflow:hidden;flex:1 1 auto}
+#left .card{flex:0 1 auto}
+.card-head{flex:0 0 auto;height:37px;display:flex;align-items:center;gap:8px;
+  padding:0 10px;border-bottom:1px solid var(--line);background:#fff}
+.card-head h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.2px}
+.card-head .sp{flex:1 1 auto}
+.card-head button{height:23px;padding:0 9px;font-size:12px;border-radius:5px}
+.headstat{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+.headstat b{color:var(--red);font-size:14px;font-variant-numeric:tabular-nums}
+
+/* ---------- 号码网格 ---------- */
+.grid{flex:1 1 auto;min-height:0;overflow:auto;display:block}
+.gbody{display:flex;flex-wrap:wrap;align-items:flex-start}
+.gcol{flex:1 1 152px;min-width:142px;display:flex;flex-direction:column;
+  border-left:1px solid #eef2f8}
+.gcol:first-child{border-left:0}
+.ghead{position:sticky;top:0;z-index:2;display:flex;height:23px;
+  background:linear-gradient(#f7fbff,#e3edf9);border-bottom:1px solid #cfdcea}
+.gcell{display:flex;align-items:center;gap:5px;padding:0 6px;height:23px;
+  font-size:11px;color:#6d87a5;font-weight:600;letter-spacing:.5px}
+.c1{width:34px;flex:0 0 34px;text-align:center}
+.c2{width:44px;flex:0 0 44px;text-align:center}
+.c3{flex:1 1 auto;text-align:center}
+.row{display:flex;align-items:center;gap:5px;height:21px;padding:0 6px;
+  border-bottom:1px solid #eff2f7;transition:background .1s}
+.row:hover{background:#f7fbff}
+.row:last-child{border-bottom:0}
+
+/* 号码球 */
+.numcell{flex:0 0 34px;display:inline-flex;align-items:center;gap:2px}
+.chip{flex:0 0 18px;width:18px;height:18px;border-radius:50%;display:inline-flex;
+  align-items:center;justify-content:center;font-size:10px;font-weight:700;
+  font-variant-numeric:tabular-nums;letter-spacing:0;line-height:1}
+.chip.red{color:var(--red);background:#fdeceb;box-shadow:inset 0 0 0 1px #f2c8c3}
+.chip.blue{color:var(--blue);background:#eaf2fb;box-shadow:inset 0 0 0 1px #c6dcf0}
+.chip.green{color:var(--green);background:#e9f7ef;box-shadow:inset 0 0 0 1px #c4e5d3}
+.zod{font-size:10.5px;color:#68788d;line-height:1;flex:0 0 auto}
+.odd{width:44px;flex:0 0 44px;text-align:center;font-size:11.5px;color:#bb4a3c;
+  font-variant-numeric:tabular-nums}
+.cntcell{width:44px;flex:0 0 44px;text-align:center;font-size:11.5px;color:#5b6a80;
+  font-variant-numeric:tabular-nums;font-weight:600}
+.amtbox{flex:1 1 auto;min-width:0;display:flex;align-items:center}
+.amt{width:100%;min-width:0;height:18px;padding:0 2px;border:1px solid #d9dfe8;border-radius:3px;
+  background:#fff;font:inherit;font-size:12px;font-weight:700;color:#1e2733;text-align:center;
+  outline:none;font-variant-numeric:tabular-nums;transition:border-color .1s,box-shadow .1s}
+.amt:hover{border-color:#c3ccd9}
+.amt:focus{border-color:#7fb0ee;box-shadow:0 0 0 2px rgba(47,111,208,.16)}
+.amt.has-amt{background:var(--hl);border-color:var(--hl-line)}
+.amt[readonly]{cursor:default;color:#2a3342}
+.amt[readonly]:focus{border-color:#d9dfe8;box-shadow:none}
+.amt[readonly].has-amt:focus{border-color:var(--hl-line)}
+
+/* ---------- 卡片底栏 ---------- */
+.card-foot{flex:0 0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:7px 9px;border-top:1px solid var(--line);background:#fcfdff}
+.stat{display:inline-flex;align-items:center;gap:6px;background:#f5f7fb;
+  border:1px solid #e6ebf3;border-radius:6px;padding:3px 9px}
+.stat i{font-style:normal;font-size:11.5px;color:var(--muted)}
+.stat b{font-size:13px;font-variant-numeric:tabular-nums;color:#2a3342}
+.stat b.hot{color:var(--red)}
+.push{margin-left:auto}
+
+/* ---------- 表格 ---------- */
+.table-wrap{flex:1 1 auto;min-height:0;overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+thead th{position:sticky;top:0;z-index:1;background:#f7f9fc;color:#6b7a8e;
+  font-size:11.5px;font-weight:600;text-align:center;padding:7px 6px;
+  border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:4px 6px;border-bottom:1px solid #f2f5f9;text-align:center;
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:0}
+#history-table tbody tr{cursor:pointer}
+#history-table tbody tr:hover td{background:#f6faff}
+#history-table tbody tr.selected td{background:#e8f1fe}
+#history-table tbody tr.cancelled td{color:#a7b1bf}
+td.left{text-align:left;white-space:normal;word-break:break-all;min-width:70px;
+  font-size:11.5px;line-height:1.35}
+.pill{display:inline-block;padding:1px 7px;border-radius:9px;font-size:11px;line-height:15px}
+.pill.ok{background:#e9f7ef;color:var(--green)}
+.pill.cancel{background:#f0f2f6;color:#8b96a6}
+
+/* 风险统计 */
+#risk-table td.rnum{text-align:left;padding-left:10px}
+#risk-table td.ramt{position:relative;text-align:right;padding-right:10px;font-weight:700}
+#risk-table td.ramt .bar{position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  height:13px;border-radius:3px;background:#eaf1fd;z-index:0}
+#risk-table td.ramt span{position:relative;z-index:1}
+.empty{padding:26px 0;text-align:center;color:#9aa6b6;font-size:12px}
+
+/* ---------- 识别规则卡片 ---------- */
+.rules{flex:0 0 auto}
+.rules-body{padding:9px 12px 11px;display:flex;flex-direction:column;gap:6px;
+  font-size:12px;color:#4c5a6d;line-height:1.5}
+.rules-body div{display:flex;gap:7px;align-items:baseline}
+.rules-body code{flex:0 0 auto;background:#f3f6fa;border:1px solid #e4eaf3;border-radius:4px;
+  padding:0 5px;font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:#3c4d66}
+.rules-body .warn{color:#a5651f;background:#fdf7ec;border:1px solid #f2e3c6;
+  border-radius:6px;padding:5px 8px;margin-top:1px;display:block}
+@media (max-height:840px){.rules{display:none}}
+
+/* ---------- 提示 ---------- */
+#toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(10px);
+  background:rgba(28,36,48,.94);color:#fff;padding:9px 18px;border-radius:8px;font-size:12.5px;
+  opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:99;
+  max-width:80vw;box-shadow:0 6px 20px rgba(16,24,40,.22)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ====================== 自适应 ====================== */
+
+/* 平板：收紧号码区块与列宽 */
+@media (max-width:1180px){
+  #left{min-width:392px}
+  #history{min-width:178px}
+  #risk{min-width:134px}
+  .gcol{flex:1 1 134px;min-width:128px}
+  .ghead,.gcell{height:22px}
+  .c1{width:30px;flex:0 0 30px}
+  .numcell{flex:0 0 30px;gap:1px}
+  .c2{width:38px;flex:0 0 38px}
+  .odd,.cntcell{width:38px;flex:0 0 38px}
+  .zod{font-size:10px}
+  .amt{font-size:11.5px}
+  .headstat{font-size:11.5px}
+}
+
+/* 小笔记本：侧栏更窄，规则卡片收起 */
+@media (max-width:980px){
+  .rules{display:none}
+  #left{min-width:360px}
+  #history{min-width:160px}
+  #risk{min-width:126px}
+}
+
+/* 手机 / 窄屏：单列纵向堆叠，整页滚动 */
+@media (max-width:820px){
+  html,body{height:auto;overflow:visible}
+  body{background:var(--bg);-webkit-text-size-adjust:100%}
+  #app{height:auto;min-height:100%}
+
+  .topbar{height:auto;flex-wrap:wrap;padding:9px 10px;gap:8px;
+    position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(16,24,40,.06)}
+  .brand{flex:1 1 auto}
+  .quickbox{flex:1 1 100%;order:2;flex-wrap:wrap;gap:8px}
+  .quickbox .tip{display:none}
+  .quickbox input{flex:1 1 100%;height:38px;font-size:16px;padding:0 12px}
+  .quickbox button{flex:1 1 0;height:38px;font-size:13.5px}
+
+  #body{flex-direction:column;padding:8px;gap:10px}
+  #left,#history,#risk{flex:0 0 auto;width:100%;min-width:0}
+  .col{gap:8px}
+  .splitter{display:none}
+
+  .custbar{gap:10px}
+  .custbar label{font-size:13px}
+  .custbar input{flex:1 1 auto;width:auto;height:38px;font-size:16px}
+
+  .card{border-radius:10px;min-height:0}
+  #left .card{flex:0 0 auto}
+  .card-head{height:auto;min-height:40px;flex-wrap:wrap;gap:8px;padding:7px 10px}
+  .card-head h2{font-size:13.5px}
+  .card-head button{height:30px;padding:0 11px;font-size:12.5px}
+  .headstat{margin-left:auto}
+  .card-foot{padding:9px 10px;gap:7px}
+
+  /* 网格：区块自动换行，整页滚动 */
+  .grid{overflow:visible;max-height:none}
+  .gbody{gap:8px 0}
+  .gcol{flex:1 1 46%;min-width:0;border-left:0;border-top:1px solid #eef2f8;padding-top:2px}
+  .gcol:nth-child(-n+2){border-top:0;padding-top:0}
+  .ghead{position:static;height:26px;border-radius:5px 5px 0 0}
+  .gcell{height:26px;font-size:11.5px}
+  .row{height:28px;gap:4px;padding:0 4px}
+  .c1{width:36px;flex:0 0 36px}
+  .numcell{flex:0 0 36px;gap:2px}
+  .chip{flex:0 0 21px;width:21px;height:21px;font-size:11.5px}
+  .zod{font-size:11px}
+  .c2{width:38px;flex:0 0 38px}
+  .odd,.cntcell{width:38px;flex:0 0 38px;font-size:12px}
+  .amt{height:26px;font-size:16px;padding:0 3px;border-radius:4px}
+
+  /* 表格：整页滚动 + 横向自适应 */
+  .table-wrap{overflow:auto;max-height:62vh;-webkit-overflow-scrolling:touch}
+  table{font-size:12.5px}
+  thead th{padding:8px 6px;font-size:12px}
+  tbody td{padding:7px 6px}
+  #risk-table td.rnum{padding-left:8px}
+  #risk-table td.ramt{padding-right:8px}
+
+  #toast{bottom:22px;font-size:13px;padding:10px 16px;max-width:88vw}
+}
+
+/* 超窄屏：进一步收窄号码区块 */
+@media (max-width:430px){
+  .card-head button{padding:0 9px;font-size:12px}
+  .headstat{font-size:11.5px}
+  .c1{width:32px;flex:0 0 32px}
+  .numcell{flex:0 0 32px;gap:1px}
+  .chip{flex:0 0 20px;width:20px;height:20px;font-size:11px}
+  .zod{font-size:10px}
+  .c2{width:34px;flex:0 0 34px}
+  .odd,.cntcell{width:34px;flex:0 0 34px;font-size:11.5px}
+}
+
+/* 触屏设备：加大点击区域，去掉 hover 干扰 */
+@media (hover:none){
+  .row:hover{background:transparent}
+  #history-table tbody tr:hover td{background:transparent}
+  button{min-height:32px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="brand">
+      <span class="logo">六</span>
+      <b>六合彩统计</b>
+      <span class="year" id="year-tag">2026 马年</span>
+    </div>
+    <div class="quickbox">
+      <span class="tip">快速识别</span>
+      <input id="quick" type="text" placeholder="龙鸡各肖100   单各100   鼠/100   1,2,3,4/100">
+      <button class="primary" id="btn-recognize">识别填入</button>
+      <button class="ghost" id="btn-clear-quick">清空</button>
+    </div>
+  </div>
+
+  <div id="body">
+    <div id="left" class="col">
+      <div class="custbar">
+        <label for="customer">客户</label>
+        <input id="customer" type="text" value="张三" autocomplete="off">
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>散码</h2>
+          <span class="sp"></span>
+          <span class="headstat">本单汇总 <b id="cust-total">0</b></span>
+          <button id="btn-clear-order">清空本单</button>
+        </div>
+        <div class="grid" id="cust-grid"></div>
+        <div class="card-foot">
+          <span class="stat"><i>散码总数</i><b class="hot" id="cust-sum-box">0</b></span>
+          <span class="stat"><i>号码个数</i><b id="cust-count-box">0</b></span>
+          <button class="primary push" id="btn-confirm">确定下注</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>散码汇总</h2>
+          <span class="sp"></span>
+          <span class="headstat">本单汇总 <b id="sum-total">0</b></span>
+          <button id="btn-clear-all">清空数据</button>
+        </div>
+        <div class="grid" id="sum-grid"></div>
+        <div class="card-foot">
+          <span class="stat"><i>散码总数</i><b class="hot" id="sum-total-box">0</b></span>
+          <span class="stat"><i>总注数</i><b id="sum-bet-box">0</b></span>
+          <button class="push" id="btn-copy">复制汇总数据</button>
+        </div>
+      </div>
+
+      <div class="card rules">
+        <div class="card-head"><h2>识别规则</h2></div>
+        <div class="rules-body">
+          <div><code>各肖</code><span>生肖均分：龙鸡各肖100 → 龙、鸡各号 25</span></div>
+          <div><code>各号</code><span>每号全额：羊鸡龙各号100 → 12 个号各 100</span></div>
+          <div><code>/</code><span>每号全额：鼠/100、1,2,3,4/100、龙鸡/100</span></div>
+          <div><code>单 双</code><span>全部单/双号：单各100 → 25 个单号各 100</span></div>
+          <div><code>波色</code><span>红 / 蓝 / 绿：红各50 → 17 个红波号码各 50</span></div>
+          <div class="warn">生肖不能直接接「各」，请用 各肖 / 各号 / 「/」</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="splitter" id="sp1"></div>
+
+    <div id="history" class="col">
+      <div class="card">
+        <div class="card-head">
+          <h2>下注记录</h2>
+          <button id="btn-revoke">撤单</button>
+          <button id="btn-clear-records">清除</button>
+          <span class="sp"></span>
+          <span class="headstat" id="history-info">共 0 条</span>
+        </div>
+        <div class="table-wrap">
+          <table id="history-table">
+            <thead><tr><th>时间</th><th>客户</th><th>内容</th><th>注</th><th>金额</th><th>状态</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="splitter" id="sp2"></div>
+
+    <div id="risk" class="col">
+      <div class="card">
+        <div class="card-head">
+          <h2>风险统计</h2>
+          <span class="sp"></span>
+          <span class="headstat" id="risk-info">暂无数据</span>
+        </div>
+        <div class="table-wrap">
+          <table id="risk-table">
+            <thead><tr><th>号码</th><th>注数</th><th>金额</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ====================== 常量 ====================== */
+function range(a,b){const r=[];for(let n=a;n<=b;n++)r.push(n);return r;}
+
+const ZODIAC_ORDER=['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+const YEAR_ZODIAC='马';
+const CURRENT_YEAR=2026;
+const MIN_NUMBER=1;
+const MAX_NUMBER=49;
+const ALL_NUMBERS=range(MIN_NUMBER,MAX_NUMBER);
+const GRID_COLUMNS=[range(1,10),range(11,20),range(21,30),range(31,40),range(41,49)];
+const ODD_VALUE=47.383;
+
+const RED_WAVE=new Set([1,2,7,8,12,13,18,19,23,24,29,30,34,35,40,45,46]);
+const BLUE_WAVE=new Set([3,4,9,10,14,15,20,25,26,31,36,37,41,42,47,48]);
+const WAVE_NAMES={
+  红:RED_WAVE,
+  蓝:BLUE_WAVE,
+  绿:new Set(ALL_NUMBERS.filter(function(n){return !RED_WAVE.has(n)&&!BLUE_WAVE.has(n);}))
+};
+const WAVE_CLASS={红:'red',蓝:'blue',绿:'green'};
+
+const ZODIAC_MAP={};
+(function(){
+  const base=ZODIAC_ORDER.indexOf(YEAR_ZODIAC);
+  for(const n of ALL_NUMBERS){
+    ZODIAC_MAP[n]=ZODIAC_ORDER[((base-(n-1))%12+12)%12];
+  }
+})();
+
+const ZODIAC_TO_NUMBERS={};
+for(const z of ZODIAC_ORDER)ZODIAC_TO_NUMBERS[z]=[];
+for(const n of ALL_NUMBERS)ZODIAC_TO_NUMBERS[ZODIAC_MAP[n]].push(n);
+
+function waveOf(n){
+  if(RED_WAVE.has(n))return '红';
+  if(BLUE_WAVE.has(n))return '蓝';
+  return '绿';
+}
+
+/* ====================== 下注文本解析 ======================
+   规则：
+     各肖 / 各生肖 : 每个生肖一个总额，肖内号码平摊   龙鸡各肖100 -> 龙、鸡各号25
+     各号          : 每个生效号码都下注该金额         羊鸡龙各号100 -> 每个号100
+     / 或 =        : 选号/金额，每个号都下注          鼠/100、龙鸡/100、1,2,3,4/100
+     各 / 下       : 每个号都下注（数字/单双/波色）    单各100 -> 所有单号100
+                     生肖不能直接用「各」（龙狗各100 不识别）
+   ========================================================== */
+/* ===PARSER_START=== */
+const ZODIAC_SET=new Set(ZODIAC_ORDER);
+const WAVE_CHARS=Object.keys(WAVE_NAMES);
+
+function normalizeDigits(s){
+  return s.replace(/[０-９]/g,function(ch){
+    return String.fromCharCode(ch.charCodeAt(0)-0xFEE0);
+  });
+}
+
+const SELECTION_CLASS='0-9０-９'+ZODIAC_ORDER.join('')+WAVE_CHARS.join('')+'单双'+',，、.．\\s';
+const SEGMENT_RE=new RegExp(
+  '(['+SELECTION_CLASS+']+?)\\s*'+
+  '(各肖|各生肖|各號|各号|各個號|各个号|各|下|\\/|／|=)\\s*'+
+  '(\\d+(?:\\.\\d+)?)\\s*(?:元|块|米)?',
+  'g'
+);
+
+function connMode(conn){
+  if(conn==='各肖'||conn==='各生肖')return 'zodiac_split';
+  if(conn==='各号'||conn==='各號'||conn==='各個號'||conn==='各个号')return 'per_number';
+  if(conn==='/'||conn==='／'||conn==='=')return 'per_number';
+  return 'basic';
+}
+
+function splitParts(sel){
+  return normalizeDigits(sel).split(/[,，、.．\s]+/).filter(function(p){return p.length>0;});
+}
+
+function scanNumbers(sel,allowZodiac){
+  const list=[];
+  let forbidden=false;
+  for(const part of splitParts(sel)){
+    let i=0;
+    while(i<part.length){
+      const ch=part[i];
+      if(ch>='0'&&ch<='9'){
+        let j=i+1;
+        while(j<part.length&&part[j]>='0'&&part[j]<='9')j++;
+        const n=parseInt(part.slice(i,j),10);
+        if(n>=MIN_NUMBER&&n<=MAX_NUMBER)list.push([n,String(n)]);
+        i=j;
+        continue;
+      }
+      if(ch==='单'){
+        for(const n of ALL_NUMBERS)if(n%2===1)list.push([n,'单']);
+      }else if(ch==='双'){
+        for(const n of ALL_NUMBERS)if(n%2===0)list.push([n,'双']);
+      }else if(WAVE_NAMES[ch]){
+        for(const n of WAVE_NAMES[ch])list.push([n,ch]);
+      }else if(ZODIAC_SET.has(ch)){
+        if(allowZodiac){
+          for(const n of ZODIAC_TO_NUMBERS[ch])list.push([n,ch]);
+        }else{
+          forbidden=true;
+        }
+      }
+      i++;
+    }
+  }
+  return {list:list,forbidden:forbidden};
+}
+
+function scanZodiacGroups(sel){
+  const groups=[];
+  const seen=new Set();
+  let hasNon=false;
+  for(const part of splitParts(sel)){
+    for(const ch of part){
+      if(ZODIAC_SET.has(ch)){
+        if(!seen.has(ch)){
+          seen.add(ch);
+          groups.push([ch,ZODIAC_TO_NUMBERS[ch].slice()]);
+        }
+      }else{
+        hasNon=true;
+      }
+    }
+  }
+  return {groups:groups,hasNon:hasNon};
+}
+
+function dedupe(pairs){
+  const seen=new Set();
+  const out=[];
+  for(const pair of pairs){
+    if(!seen.has(pair[0])){
+      seen.add(pair[0]);
+      out.push(pair);
+    }
+  }
+  return out;
+}
+
+function parseBetText(text){
+  const result={bets:[],totalAmount:0,errors:[],rawSegments:[]};
+  if(!text||!text.trim()){
+    result.errors.push('请输入下注内容');
+    return result;
+  }
+
+  const merged=new Map();
+  function merge(n,amount,src){
+    if(merged.has(n)){
+      const prev=merged.get(n);
+      merged.set(n,[prev[0]+amount,prev[1]]);
+    }else{
+      merged.set(n,[amount,src]);
+    }
+  }
+
+  SEGMENT_RE.lastIndex=0;
+  let m;
+  while((m=SEGMENT_RE.exec(text))!==null){
+    const sel=m[1].trim();
+    const conn=m[2];
+    const amount=parseFloat(m[3]);
+    const seg=m[0].trim();
+    result.rawSegments.push(seg);
+
+    if(!sel){
+      result.errors.push('缺少选号：'+seg);
+      continue;
+    }
+
+    const mode=connMode(conn);
+
+    if(mode==='zodiac_split'){
+      const zg=scanZodiacGroups(sel);
+      if(!zg.groups.length){
+        result.errors.push('「各肖」只能用于生肖：'+seg);
+        continue;
+      }
+      if(zg.hasNon){
+        result.errors.push('「各肖」只能用于生肖，请检查：'+seg);
+        continue;
+      }
+      for(const g of zg.groups){
+        const nums=g[1];
+        if(!nums.length)continue;
+        const per=amount/nums.length;
+        for(const n of nums)merge(n,per,g[0]);
+      }
+      continue;
+    }
+
+    const allowZodiac=(mode==='per_number');
+    const scan=scanNumbers(sel,allowZodiac);
+    if(scan.forbidden&&!scan.list.length){
+      result.errors.push('生肖不能直接用「各」，请用「各肖」「各号」或「/」：'+seg);
+      continue;
+    }
+    if(!scan.list.length){
+      result.errors.push('无法识别选号：'+seg);
+      continue;
+    }
+    for(const pair of dedupe(scan.list))merge(pair[0],amount,pair[1]);
+  }
+
+  if(!merged.size){
+    if(!result.errors.length){
+      result.errors.push('未能识别下注内容，请使用如「1,2,3各100」「龙鸡各肖100」「羊鸡龙各号100」「鼠/100」「单各100」等格式');
+    }
+    return result;
+  }
+
+  const nums=Array.from(merged.keys()).sort(function(a,b){return a-b;});
+  for(const n of nums){
+    const entry=merged.get(n);
+    result.bets.push({
+      number:n,
+      amount:entry[0],
+      zodiac:ZODIAC_MAP[n],
+      wave:waveOf(n),
+      source:entry[1]
+    });
+    result.totalAmount+=entry[0];
+  }
+  return result;
+}
+/* ===PARSER_END=== */
+
+/* ===UI_START=== */
+const STORAGE_KEY='liuhecai_web_v1';
+const ODD_TEXT=ODD_VALUE.toFixed(3);
+
+/* ---------- 工具 ---------- */
+function fmt(v){
+  if(Number.isInteger(v))return String(v);
+  return v.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+}
+function pad2(n){return String(n).padStart(2,'0');}
+function sortedNums(obj){
+  return Object.keys(obj)
+    .map(Number)
+    .filter(function(n){return obj[n]>0;})
+    .sort(function(a,b){return a-b;});
+}
+function sumValues(obj){
+  let s=0;
+  for(const k in obj){if(obj[k]>0)s+=obj[k];}
+  return s;
+}
+
+let toastTimer=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){el.classList.remove('show');},2200);
+}
+
+/* ---------- 状态 ---------- */
+const state={
+  pendingTexts:[],
+  summaryAmounts:{},
+  summaryCounts:{},
+  records:[],
+  nextRecordId:1,
+  selectedId:null,
+  ratios:null
+};
+
+const $=function(id){return document.getElementById(id);};
+const quickInput=$('quick');
+const customerInput=$('customer');
+const leftCol=$('left');
+const histCol=$('history');
+const riskCol=$('risk');
+const panels=[leftCol,histCol,riskCol];
+
+let custInputs={};
+let sumInputs={};
+let sumCounts={};
+
+/* ---------- 网格 ---------- */
+function makeChip(n){
+  const wrap=document.createElement('span');
+  wrap.className='numcell';
+
+  const ball=document.createElement('span');
+  ball.className='chip '+WAVE_CLASS[waveOf(n)];
+  ball.textContent=pad2(n);
+
+  const zod=document.createElement('span');
+  zod.className='zod';
+  zod.textContent=ZODIAC_MAP[n];
+
+  wrap.appendChild(ball);
+  wrap.appendChild(zod);
+  wrap.title=pad2(n)+ZODIAC_MAP[n]+' · '+waveOf(n)+'波';
+  return wrap;
+}
+
+function buildGrid(container,readonly,showCount){
+  container.innerHTML='';
+  const inputs={};
+  const counts={};
+  const midLabel=showCount?'注数':'赔率';
+
+  const body=document.createElement('div');
+  body.className='gbody';
+
+  for(let i=0;i<GRID_COLUMNS.length;i++){
+    const col=document.createElement('div');
+    col.className='gcol';
+
+    const head=document.createElement('div');
+    head.className='ghead';
+    const hc=document.createElement('div');
+    hc.className='gcell';
+    hc.innerHTML='<span class="c1">号码</span><span class="c2">'+midLabel+'</span><span class="c3">金额</span>';
+    head.appendChild(hc);
+    col.appendChild(head);
+
+    for(const n of GRID_COLUMNS[i]){
+      const row=document.createElement('div');
+      row.className='row';
+
+      const chip=makeChip(n);
+
+      const mid=document.createElement('span');
+      if(showCount){
+        mid.className='cntcell';
+        mid.textContent='';
+        counts[n]=mid;
+      }else{
+        mid.className='odd';
+        mid.textContent=ODD_TEXT;
+      }
+
+      const box=document.createElement('span');
+      box.className='amtbox';
+
+      const inp=document.createElement('input');
+      inp.className='amt';
+      inp.type='text';
+      inp.setAttribute('inputmode','decimal');
+      inp.setAttribute('autocomplete','off');
+      inp.dataset.n=String(n);
+      if(readonly)inp.readOnly=true;
+
+      box.appendChild(inp);
+
+      row.appendChild(chip);
+      row.appendChild(mid);
+      row.appendChild(box);
+      col.appendChild(row);
+      inputs[n]=inp;
+    }
+    body.appendChild(col);
+  }
+
+  container.appendChild(body);
+  return {inputs:inputs,counts:counts};
+}
+
+function cellHasAmount(inp){
+  const v=parseFloat(inp.value);
+  return !isNaN(v)&&v>0;
+}
+function refreshCell(inp){
+  inp.classList.toggle('has-amt',cellHasAmount(inp));
+}
+function refreshAllCells(inputs){
+  for(const n in inputs)refreshCell(inputs[n]);
+}
+
+function getAmounts(inputs){
+  const out={};
+  for(const n in inputs){
+    const v=parseFloat(inputs[n].value);
+    if(!isNaN(v)&&v>0)out[n]=v;
+  }
+  return out;
+}
+
+function setAmounts(inputs,amounts){
+  for(const n in inputs){
+    const key=String(n);
+    if(Object.prototype.hasOwnProperty.call(amounts,key)&&amounts[key]>0){
+      inputs[n].value=fmt(amounts[key]);
+    }else{
+      inputs[n].value='';
+    }
+  }
+  refreshAllCells(inputs);
+}
+
+/* ---------- 客户面板 ---------- */
+function refreshCustomerTotals(){
+  const amounts=getAmounts(custInputs);
+  const total=sumValues(amounts);
+  $('cust-total').textContent=fmt(total);
+  $('cust-sum-box').textContent=fmt(total);
+  $('cust-count-box').textContent=String(Object.keys(amounts).length);
+}
+
+/* ---------- 汇总面板 ---------- */
+function totalBetTimes(){
+  let s=0;
+  for(const k in state.summaryCounts)s+=state.summaryCounts[k];
+  return s;
+}
+
+function renderSummary(){
+  for(const n in sumInputs){
+    const key=String(n);
+    const amt=state.summaryAmounts[key]||0;
+    const cnt=state.summaryCounts[key]||0;
+    sumInputs[n].value=amt>0?fmt(amt):'';
+    sumCounts[n].textContent=cnt>0?String(cnt):'';
+    refreshCell(sumInputs[n]);
+  }
+  const total=sumValues(state.summaryAmounts);
+  $('sum-total').textContent=fmt(total);
+  $('sum-total-box').textContent=fmt(total);
+  $('sum-bet-box').textContent=String(totalBetTimes());
+  renderRisk();
+}
+
+/* ---------- 风险统计 ---------- */
+function renderRisk(){
+  const tbody=document.querySelector('#risk-table tbody');
+  tbody.innerHTML='';
+  const nums=sortedNums(state.summaryAmounts);
+  if(!nums.length){
+    $('risk-info').textContent='暂无数据';
+    const tr=document.createElement('tr');
+    const td=document.createElement('td');
+    td.colSpan=3;
+    td.className='empty';
+    td.textContent='暂无下注数据';
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
+  const rows=nums.map(function(n){
+    return {n:n,amount:state.summaryAmounts[n],count:state.summaryCounts[n]||0};
+  });
+  rows.sort(function(a,b){return b.amount-a.amount||a.n-b.n;});
+  let max=0;
+  for(const r of rows)if(r.amount>max)max=r.amount;
+
+  for(const r of rows){
+    const tr=document.createElement('tr');
+
+    const td1=document.createElement('td');
+    td1.className='rnum';
+    td1.appendChild(makeChip(r.n));
+
+    const td2=document.createElement('td');
+    td2.textContent=String(r.count);
+
+    const td3=document.createElement('td');
+    td3.className='ramt';
+    const bar=document.createElement('i');
+    bar.className='bar';
+    bar.style.width=Math.max(6,Math.round(r.amount/max*100))+'%';
+    const val=document.createElement('span');
+    val.textContent=fmt(r.amount);
+    td3.appendChild(bar);
+    td3.appendChild(val);
+
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tbody.appendChild(tr);
+  }
+  $('risk-info').textContent='共 '+rows.length+' 个号 · '+fmt(sumValues(state.summaryAmounts))+' 元';
+}
+
+/* ---------- 下注记录 ---------- */
+function timeStr(iso){
+  const d=new Date(iso);
+  function p(v){return String(v).padStart(2,'0');}
+  return p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+}
+function summaryText(raw){
+  const t=String(raw).replace(/\n/g,' ').trim();
+  return t.length>28?t.slice(0,28)+'…':t;
+}
+
+function renderRecords(){
+  const tbody=document.querySelector('#history-table tbody');
+  tbody.innerHTML='';
+
+  if(!state.records.length){
+    const tr=document.createElement('tr');
+    const td=document.createElement('td');
+    td.colSpan=6;
+    td.className='empty';
+    td.textContent='暂无下注记录';
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    refreshHistoryInfo();
+    return;
+  }
+
+  for(const r of state.records){
+    const tr=document.createElement('tr');
+    tr.dataset.id=String(r.id);
+    if(r.cancelled)tr.classList.add('cancelled');
+    if(state.selectedId===r.id)tr.classList.add('selected');
+
+    const cells=[
+      {text:timeStr(r.time)},
+      {text:r.customer},
+      {text:summaryText(r.rawText),cls:'left'},
+      {text:String(r.betCount)},
+      {text:fmt(r.total)},
+      {pill:r.cancelled?'已撤单':'有效'}
+    ];
+    for(const c of cells){
+      const td=document.createElement('td');
+      if(c.cls)td.className=c.cls;
+      if(c.pill){
+        const s=document.createElement('span');
+        s.className='pill '+(r.cancelled?'cancel':'ok');
+        s.textContent=c.pill;
+        td.appendChild(s);
+      }else{
+        td.textContent=c.text;
+      }
+      tr.appendChild(td);
+    }
+
+    tr.addEventListener('click',function(){
+      state.selectedId=(state.selectedId===r.id)?null:r.id;
+      renderRecords();
+      saveNow();
+    });
+    tbody.appendChild(tr);
+  }
+  refreshHistoryInfo();
+}
+
+function refreshHistoryInfo(){
+  let active=0;
+  let total=0;
+  for(const r of state.records){
+    if(!r.cancelled){
+      active++;
+      total+=r.total;
+    }
+  }
+  $('history-info').textContent='共 '+state.records.length+' 条 · 有效 '+active+' 条 · '+fmt(total)+' 元';
+}
+
+/* ---------- 业务操作 ---------- */
+function confirmBet(){
+  const amounts=getAmounts(custInputs);
+  const keys=Object.keys(amounts);
+  if(!keys.length){
+    toast('当前本单没有下注数据');
+    return;
+  }
+
+  for(const k of keys){
+    state.summaryAmounts[k]=(state.summaryAmounts[k]||0)+amounts[k];
+    state.summaryCounts[k]=(state.summaryCounts[k]||0)+1;
+  }
+
+  const customer=customerInput.value.trim()||'客户';
+  let rawText;
+  if(state.pendingTexts.length){
+    rawText=state.pendingTexts.join(' | ');
+  }else{
+    rawText=keys.map(Number).sort(function(a,b){return a-b;})
+      .map(function(n){return pad2(n)+ZODIAC_MAP[n]+'各'+fmt(amounts[n]);})
+      .join('、');
+  }
+
+  const total=sumValues(amounts);
+  const recordAmounts={};
+  for(const k of keys)recordAmounts[k]=amounts[k];
+
+  state.records.unshift({
+    id:state.nextRecordId++,
+    time:new Date().toISOString(),
+    customer:customer,
+    rawText:rawText,
+    amounts:recordAmounts,
+    total:total,
+    betCount:keys.length,
+    cancelled:false
+  });
+
+  state.pendingTexts=[];
+  setAmounts(custInputs,{});
+  refreshCustomerTotals();
+  quickInput.value='';
+
+  renderSummary();
+  renderRecords();
+  saveNow();
+  toast('已下注 '+keys.length+' 注 · '+fmt(total)+' 元');
+}
+
+function applyBetText(text){
+  const result=parseBetText(text);
+  if(result.errors.length&&!result.bets.length){
+    alert('识别失败：\n'+result.errors.join('\n'));
+    return;
+  }
+  const amounts={};
+  for(const b of result.bets)amounts[String(b.number)]=b.amount;
+
+  setAmounts(custInputs,amounts);
+  refreshCustomerTotals();
+  state.pendingTexts=[text.trim()];
+  saveNow();
+
+  if(result.errors.length){
+    toast('已识别 '+result.bets.length+' 注（部分未识别）');
+  }else{
+    toast('已识别 '+result.bets.length+' 注 · '+fmt(result.totalAmount)+' 元');
+  }
+}
+
+function revokeSelected(){
+  if(state.selectedId==null){
+    toast('请先选择要撤单的记录');
+    return;
+  }
+  let rec=null;
+  for(const r of state.records){
+    if(r.id===state.selectedId){rec=r;break;}
+  }
+  if(!rec){
+    toast('请先选择要撤单的记录');
+    return;
+  }
+  if(rec.cancelled){
+    toast('该记录已撤单');
+    return;
+  }
+  if(!confirm('撤单：'+summaryText(rec.rawText)+'\n金额 '+fmt(rec.total)+' 元？'))return;
+
+  for(const k in rec.amounts){
+    const cur=(state.summaryAmounts[k]||0)-rec.amounts[k];
+    if(cur>0)state.summaryAmounts[k]=cur;
+    else delete state.summaryAmounts[k];
+
+    const cnt=Math.max(0,(state.summaryCounts[k]||0)-1);
+    if(cnt>0)state.summaryCounts[k]=cnt;
+    else delete state.summaryCounts[k];
+  }
+  rec.cancelled=true;
+  state.selectedId=null;
+
+  renderSummary();
+  renderRecords();
+  saveNow();
+  toast('已撤单');
+}
+
+function clearRecords(){
+  if(!state.records.length){
+    toast('暂无下注记录');
+    return;
+  }
+  if(!confirm('是否确定清除下注记录？'))return;
+  state.records=[];
+  state.selectedId=null;
+  renderRecords();
+  saveNow();
+  toast('下注记录已清除');
+}
+
+function clearSummary(){
+  if(!confirm('是否确定清除数据？'))return;
+  state.summaryAmounts={};
+  state.summaryCounts={};
+  renderSummary();
+  saveNow();
+  toast('汇总数据已清除');
+}
+
+function clearCustomerOrder(){
+  setAmounts(custInputs,{});
+  refreshCustomerTotals();
+  state.pendingTexts=[];
+  saveNow();
+}
+
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.position='fixed';
+  ta.style.top='-1000px';
+  ta.style.left='0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  let ok=false;
+  try{ok=document.execCommand('copy');}catch(e){ok=false;}
+  document.body.removeChild(ta);
+  return ok;
+}
+
+function copySummary(){
+  const nums=sortedNums(state.summaryAmounts);
+  if(!nums.length){
+    toast('当前没有下注数据');
+    return;
+  }
+  const lines=nums.map(function(n){
+    return pad2(n)+ZODIAC_MAP[n]+'  '+fmt(state.summaryAmounts[n])+' ('+(state.summaryCounts[n]||0)+')';
+  });
+  const betTimes=totalBetTimes();
+  lines.push('--- 合计 '+fmt(sumValues(state.summaryAmounts))+' 元，'+betTimes+' 注 ---');
+  const text=lines.join('\n');
+
+  if(fallbackCopy(text)){
+    toast('已复制 '+betTimes+' 注到剪贴板');
+    return;
+  }
+  if(navigator.clipboard&&window.isSecureContext){
+    navigator.clipboard.writeText(text).then(function(){
+      toast('已复制 '+betTimes+' 注到剪贴板');
+    }).catch(function(){
+      prompt('复制失败，请全选后按 Ctrl+C 复制：',text);
+    });
+    return;
+  }
+  prompt('复制失败，请全选后按 Ctrl+C 复制：',text);
+}
+
+/* ---------- 持久化 ---------- */
+let saveTimer=null;
+
+function collectState(){
+  return {
+    version:1,
+    customer:customerInput.value,
+    quickText:quickInput.value,
+    pendingTexts:state.pendingTexts,
+    customerAmounts:getAmounts(custInputs),
+    summaryAmounts:state.summaryAmounts,
+    summaryCounts:state.summaryCounts,
+    records:state.records,
+    nextRecordId:state.nextRecordId,
+    cols:state.ratios
+  };
+}
+
+function saveDebounced(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(saveNow,300);
+}
+
+function saveNow(){
+  clearTimeout(saveTimer);
+  saveTimer=null;
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(collectState()));
+  }catch(e){/* 存储不可用时忽略 */}
+}
+
+function loadState(){
+  let data=null;
+  try{data=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');}catch(e){data=null;}
+  if(!data||data.version!==1)return;
+
+  customerInput.value=data.customer||'张三';
+  quickInput.value=data.quickText||'';
+  state.pendingTexts=Array.isArray(data.pendingTexts)?data.pendingTexts:[];
+  state.summaryAmounts=data.summaryAmounts||{};
+  state.summaryCounts=data.summaryCounts||{};
+  state.records=Array.isArray(data.records)?data.records:[];
+  if(data.nextRecordId){
+    state.nextRecordId=data.nextRecordId;
+  }else{
+    let maxId=0;
+    for(const r of state.records)if(r.id>maxId)maxId=r.id;
+    state.nextRecordId=maxId+1;
+  }
+
+  setAmounts(custInputs,data.customerAmounts||{});
+  refreshCustomerTotals();
+
+  if(data.cols)applyRatios(data.cols);
+
+  renderSummary();
+  renderRecords();
+}
+
+/* ---------- 分栏拖拽（按比例记忆，窄屏纵向堆叠时不启用） ---------- */
+const MIN_PX=[430,190,148];
+const stackedMq=window.matchMedia('(max-width:820px)');
+
+function clearInlineFlex(){
+  for(const el of panels)el.style.flex='';
+}
+
+function applyRatios(ratios){
+  if(!ratios||ratios.length!==3)return;
+  state.ratios=ratios;
+  if(stackedMq.matches){
+    clearInlineFlex();
+    return;
+  }
+  for(let i=0;i<3;i++)panels[i].style.flex=ratios[i]+' 1 0';
+}
+
+function syncLayoutMode(){
+  if(stackedMq.matches){
+    clearInlineFlex();
+  }else if(state.ratios){
+    applyRatios(state.ratios);
+  }
+}
+
+function makeSplitter(handle,idx){
+  handle.addEventListener('mousedown',function(e){
+    if(stackedMq.matches)return;
+    e.preventDefault();
+
+    const bodyW=$('body').getBoundingClientRect().width;
+    const total=Math.max(640,bodyW-40);
+    const startW=panels.map(function(el){return el.getBoundingClientRect().width;});
+    const startSum=startW.reduce(function(a,b){return a+b;},0)||1;
+    const start=startW.map(function(w){return w/startSum;});
+    const startX=e.clientX;
+    const others=[0,1,2].filter(function(k){return k!==idx;});
+    const othersSum=others.reduce(function(s,k){return s+start[k];},0)||1;
+
+    document.body.classList.add('col-resizing');
+
+    function onMove(ev){
+      const d=(ev.clientX-startX)/total;
+      const next=start.slice();
+      const minR=MIN_PX[idx]/total;
+      next[idx]=Math.max(minR,Math.min(0.88,start[idx]+d));
+      const actual=next[idx]-start[idx];
+      for(const k of others){
+        next[k]=Math.max(MIN_PX[k]/total,start[k]-actual*(start[k]/othersSum));
+      }
+      const s=next.reduce(function(a,b){return a+b;},0)||1;
+      applyRatios(next.map(function(x){return Math.round(x/s*1000)/1000;}));
+    }
+    function onUp(){
+      document.removeEventListener('mousemove',onMove);
+      document.removeEventListener('mouseup',onUp);
+      document.body.classList.remove('col-resizing');
+      saveNow();
+    }
+    document.addEventListener('mousemove',onMove);
+    document.addEventListener('mouseup',onUp);
+  });
+}
+
+/* ---------- 初始化 ---------- */
+function init(){
+  document.title='六合彩统计 '+CURRENT_YEAR+YEAR_ZODIAC+'年';
+  $('year-tag').textContent=CURRENT_YEAR+' '+YEAR_ZODIAC+'年';
+
+  const cg=buildGrid($('cust-grid'),false,false);
+  custInputs=cg.inputs;
+
+  const sg=buildGrid($('sum-grid'),true,true);
+  sumInputs=sg.inputs;
+  sumCounts=sg.counts;
+
+  for(const n in custInputs){
+    const inp=custInputs[n];
+    inp.addEventListener('input',function(){
+      let v=inp.value.replace(/[^\d.]/g,'');
+      v=v.replace(/^(\d*\.\d*).*$/,'$1');
+      if(v!==inp.value)inp.value=v;
+      refreshCell(inp);
+      refreshCustomerTotals();
+      saveDebounced();
+    });
+    inp.addEventListener('focus',function(){inp.select();});
+  }
+
+  $('btn-recognize').addEventListener('click',function(){
+    const t=quickInput.value.trim();
+    if(t)applyBetText(t);
+    else toast('请先输入下注内容');
+  });
+  $('btn-clear-quick').addEventListener('click',function(){
+    quickInput.value='';
+    state.pendingTexts=[];
+    saveNow();
+  });
+  quickInput.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){
+      e.preventDefault();
+      const t=quickInput.value.trim();
+      if(t)applyBetText(t);
+    }
+  });
+  quickInput.addEventListener('paste',function(){
+    setTimeout(function(){
+      const t=quickInput.value.trim();
+      if(t)applyBetText(t);
+    },30);
+  });
+
+  $('btn-confirm').addEventListener('click',confirmBet);
+  $('btn-clear-order').addEventListener('click',clearCustomerOrder);
+  $('btn-clear-all').addEventListener('click',clearSummary);
+  $('btn-copy').addEventListener('click',copySummary);
+  $('btn-revoke').addEventListener('click',revokeSelected);
+  $('btn-clear-records').addEventListener('click',clearRecords);
+  customerInput.addEventListener('input',saveDebounced);
+
+  makeSplitter($('sp1'),0);
+  makeSplitter($('sp2'),1);
+
+  window.addEventListener('beforeunload',saveNow);
+  window.addEventListener('resize',syncLayoutMode);
+  window.addEventListener('orientationchange',syncLayoutMode);
+  if(stackedMq.addEventListener)stackedMq.addEventListener('change',syncLayoutMode);
+  else if(stackedMq.addListener)stackedMq.addListener(syncLayoutMode);
+
+  loadState();
+  refreshCustomerTotals();
+  renderSummary();
+  renderRecords();
+  syncLayoutMode();
+}
+
+init();
+/* ===UI_END=== */
+})();
+</script>
+</body>
+</html>
